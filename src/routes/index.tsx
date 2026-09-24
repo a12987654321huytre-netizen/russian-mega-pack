@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Purchase } from "@/components/purchase";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -23,48 +23,37 @@ const EXCHANGES = [
 
 const ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ".split("");
 
-const INDEX_A = [
-  ["Cyrillic instruction", "Guided explanations and practice, so the alphabet becomes readable."],
-  ["Grammar", "Cases, verb conjugations, and sentence structure, explained in simple terms."],
-  ["Vocabulary", "Words Russians actually use in daily life, not textbook filler."],
-  ["Pronunciation and accent", "Visual and audio guidance for reproducing Russian sounds."],
-  ["Native speaker audio", "Recordings to train your ear and your pronunciation."],
-] as const;
-
-const INDEX_B = [
-  ["Video lessons", "Clear visual instruction that makes Russian easier to follow and remember."],
-  ["Books and reading", "Russian reading material in the same toolkit as the lessons."],
-  ["Real conversations", "Practical phrases, everyday dialogues, and natural expressions."],
-  ["Cultural context", "How Russian is spoken in homes, streets, and workplaces."],
-  ["Exercises", "Short daily practice, plus conversation-focused activities."],
-  ["Beginner to advanced", "From first words to confident conversations, in one path."],
-  ["One payment", "Lifetime access. No subscription. No recurring fees."],
-  ["Instant download", "Start immediately, on any device."],
+const MATERIALS = [
+  { name: "Cyrillic instruction", detail: "Guided explanations and practice, so the alphabet becomes readable.", mark: "АЯ", kind: "type" },
+  { name: "Grammar", detail: "Cases, verb conjugations, and sentence structure, explained in simple terms.", mark: "род", kind: "rule" },
+  { name: "Vocabulary", detail: "Words Russians actually use in daily life, not textbook filler.", mark: "мир", kind: "word" },
+  { name: "Pronunciation and accent", detail: "Visual and audio guidance for reproducing Russian sounds.", mark: "ж", kind: "sound" },
+  { name: "Native speaker audio", detail: "Recordings to train your ear and your pronunciation.", mark: "♪", kind: "audio" },
+  { name: "Video lessons", detail: "Clear visual instruction that makes Russian easier to follow and remember.", mark: "▶", kind: "video" },
+  { name: "Books and reading", detail: "Russian reading material in the same toolkit as the lessons.", mark: "том", kind: "book" },
+  { name: "Real conversations", detail: "Practical phrases, everyday dialogues, and natural expressions.", mark: "ты", kind: "talk" },
+  { name: "Cultural context", detail: "How Russian is spoken in homes, streets, and workplaces.", mark: "дом", kind: "place" },
+  { name: "Exercises", detail: "Short daily practice, plus conversation-focused activities.", mark: "1–", kind: "drill" },
+  { name: "Beginner to advanced", detail: "From first words to confident conversations, in one path.", mark: "→", kind: "path" },
 ] as const;
 
 function Home() {
   return (
     <>
-      <a className="skip" href="#after">
-        Skip to the explanation
-      </a>
+      <a className="skip" href="#pack">Skip to the pack</a>
       <header className="mast">
-        <a className="mast-mark" href="#top" aria-label="Back to the letter">
-          Ж
-        </a>
+        <a className="mast-mark" href="#top" lang="ru" aria-label="Back to the top">Ж</a>
         <nav aria-label="Page">
-          <a href="#included">Included</a>
-          <a href="#buy">Access</a>
+          <a href="#pack">The pack</a>
+          <a href="#buy">Get access</a>
         </nav>
       </header>
       <main id="top">
         <Opening />
-        <Statement />
+        <Pack />
         <Letters />
-        <Pause />
-        <Use />
-        <Included />
-        <Return />
+        <Path />
+        <Talk />
         <Buy />
         <Close />
       </main>
@@ -74,23 +63,55 @@ function Home() {
 
 function Opening() {
   return (
-    <section className="opening" aria-label="A Cyrillic letter, before it is explained">
-      <div className="plate">
-        <span className="plate-letter" lang="ru" aria-hidden="true">
-          Ж
-        </span>
+    <section className="opening" aria-label="Russian Mega Pack">
+      <div className="wall" aria-hidden="true">
+        {ALPHABET.map((letter, i) => (
+          <span key={`${letter}-${i}`} className={`wall-letter n${i % 7}`}>
+            {letter}
+          </span>
+        ))}
       </div>
-      <p className="sr">The Cyrillic letter Zhe. What it means comes next.</p>
+      <div className="open-copy">
+        <p className="kicker">One payment. Instant download. No subscription.</p>
+        <h1>Russian<span>Mega Pack</span></h1>
+        <p className="lede">
+          Audio lessons, videos, books, grammar guides, and cultural insights — one toolkit, so the work
+          is understanding the language rather than collecting apps.
+        </p>
+        <p className="open-actions">
+          <a className="go" href="#buy">Get instant access</a>
+          <a className="go quiet" href="#pack">What is inside</a>
+        </p>
+      </div>
     </section>
   );
 }
 
-function Statement() {
+function Pack() {
   return (
-    <section className="statement" id="after" aria-labelledby="lead">
-      <h1 id="lead">Russian is one of the world’s most fascinating languages.</h1>
-      <p className="aside">
-        A new alphabet. A powerful literary tradition. A language spoken across eleven time zones.
+    <section className="pack" id="pack" aria-labelledby="pack-title">
+      <div className="pack-head">
+        <h2 id="pack-title">Everything in one place.</h2>
+        <p>
+          Russian is one of the world’s most fascinating languages. A new alphabet. A powerful literary
+          tradition. A language spoken across eleven time zones. The Russian Mega Pack gives you
+          everything you need to start reading, speaking, and understanding Russian from day one.
+        </p>
+      </div>
+      <ol className="materials">
+        {MATERIALS.map((item) => (
+          <li className={`material kind-${item.kind}`} key={item.name}>
+            <span className="material-mark" lang="ru" aria-hidden="true">{item.mark}</span>
+            <span className="material-body">
+              <strong>{item.name}</strong>
+              <span>{item.detail}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p className="pack-note">
+        Stop piecing together apps and incomplete courses. One structured program. One payment. Then the
+        language itself: how it is built, how it sounds, and how it is used.
       </p>
     </section>
   );
@@ -123,132 +144,71 @@ function Letters() {
   return (
     <section className="letters" id="letters" aria-labelledby="letters-title">
       <h2 id="letters-title">Some of these letters look familiar. They are not.</h2>
-      {TRAPS.map((trap) => (
-        <div className="pair" key={trap.letter}>
-          <div className="pair-letter" lang="ru">
-            {trap.letter}
-            <small>{trap.lower}</small>
-          </div>
-          <p className="gloss">
-            is <span className="not">not {trap.not}</span>. It reads as {trap.reads}.
-          </p>
+      <div className="case">
+        {TRAPS.map((trap) => (
           <button
             type="button"
-            className="hear"
+            className={`glyph ${active === trap.letter ? "on" : ""}`}
+            key={trap.letter}
             aria-pressed={active === trap.letter}
             onClick={() => hear(trap.letter)}
           >
-            Hear
+            <span className="glyph-letter" lang="ru">
+              {trap.letter}
+              <small>{trap.lower}</small>
+            </span>
+            <span className="glyph-gloss">
+              not {trap.not}. Reads as {trap.reads}.
+              <em>Hear</em>
+            </span>
           </button>
-        </div>
-      ))}
+        ))}
+      </div>
       <p className="voice-note">
         Hear uses the voice on this device, only so the letter can be sounded. The Mega Pack includes
         native-speaker audio, visual pronunciation guidance, and practice.
       </p>
-      <p className="voice-live" aria-live="polite">
-        {note}
+      <p className="voice-live" aria-live="polite">{note}</p>
+    </section>
+  );
+}
+
+function Path() {
+  return (
+    <section className="path" aria-labelledby="path-title">
+      <p className="path-kicker" id="path-title">Beginner to advanced</p>
+      <p className="path-lines">
+        Begin with the alphabet<br />and essential grammar,<br />then progress naturally<br />toward full conversations.
+      </p>
+      <p className="path-support">
+        Build confidence with beginner-friendly resources made for real communication — reading,
+        speaking, and understanding from day one.
+      </p>
+      <p className="path-facts">
+        <span>No subscriptions.</span>
+        <span>No scattered apps.</span>
+        <span>Lifetime access.</span>
+        <span>Start immediately, on any device.</span>
       </p>
     </section>
   );
 }
 
-function Pause() {
+function Talk() {
   return (
-    <section className="pause" aria-label="How the pack is sold">
-      <p className="pause-lead">No subscriptions. No scattered apps.</p>
-      <p className="pause-sub">Just a clear path from your first words to real conversations.</p>
-    </section>
-  );
-}
-
-function Use() {
-  return (
-    <section className="use" aria-labelledby="path-title">
-      <div className="path-block">
-        <h2 id="path-title" className="sr">
-          Step by step
-        </h2>
-        <p className="path-lines">
-          Begin with the alphabet
-          <br />
-          and essential grammar,
-          <br />
-          then progress naturally
-          <br />
-          toward full conversations.
-        </p>
-        <p className="path-support">
-          Build confidence with beginner-friendly resources made for real communication — reading,
-          speaking, and understanding from day one.
-        </p>
+    <section className="talk" aria-labelledby="talk-title">
+      <div className="talk-copy">
+        <h2 id="talk-title" lang="ru">A few words, said plainly.</h2>
+        <p>Elementary phrases. The pack’s dialogues go further, into the expressions used in daily life.</p>
       </div>
-      <div className="exchanges">
-        <h2 lang="ru">A few words, said plainly.</h2>
-        <p className="lede">
-          Elementary phrases. The pack’s dialogues go further, into the expressions used in daily life.
-        </p>
+      <ol className="exchanges">
         {EXCHANGES.map((line) => (
-          <div className="exchange" key={line.ru}>
-            <p className="ru" lang="ru">
-              {line.ru}
-            </p>
+          <li className="exchange" key={line.ru}>
+            <p className="ru" lang="ru">{line.ru}</p>
             <p className="en">{line.en}</p>
-          </div>
+          </li>
         ))}
-      </div>
-    </section>
-  );
-}
-
-function Included() {
-  return (
-    <section className="included" id="included" aria-labelledby="included-title">
-      <h2 id="included-title">Everything in one place.</h2>
-      <div className="index-split">
-        <ul className="index-col">
-          {INDEX_A.map(([name, detail]) => (
-            <li className="index-item" key={name}>
-              <span className="index-name">{name}</span>
-              <span className="index-detail">{detail}</span>
-            </li>
-          ))}
-        </ul>
-        <ul className="index-col late">
-          {INDEX_B.map(([name, detail]) => (
-            <li className="index-item" key={name}>
-              <span className="index-name">{name}</span>
-              <span className="index-detail">{detail}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <p className="promise">
-        Audio lessons, videos, books, grammar guides, and cultural insights — one toolkit, so the work is
-        understanding the language rather than collecting apps.{" "}
-        <a href="#buy">Get instant access</a>
-      </p>
-    </section>
-  );
-}
-
-function Return() {
-  return (
-    <section className="return" aria-labelledby="return-title">
-      <div className="return-plate" lang="ru" aria-hidden="true">
-        Ж
-      </div>
-      <h2 id="return-title" className="return-copy">
-        The Russian Mega Pack gives you everything you need to start reading, speaking, and understanding
-        Russian from day one.
-      </h2>
-      <p className="return-note">
-        Stop piecing together apps and incomplete courses. One structured program. One payment. Then the
-        language itself: how it is built, how it sounds, and how it is used.{" "}
-        <a className="text-link" href="#buy">
-          Get instant access
-        </a>
-      </p>
+      </ol>
     </section>
   );
 }
@@ -258,10 +218,8 @@ function Buy() {
     <section className="buy" id="buy" aria-labelledby="buy-title">
       <div className="buy-copy">
         <h2 id="buy-title">Start learning Russian today.</h2>
-        <p className="buy-lead">
-          Download the Russian Mega Pack and begin your journey into one of the world’s richest and most
-          rewarding languages.
-        </p>
+        <p>Download the Russian Mega Pack and begin your journey into one of the world’s richest and most rewarding languages.</p>
+        <p className="buy-terms">One payment. Lifetime access. Instant download.</p>
       </div>
       <Purchase />
     </section>
@@ -276,9 +234,7 @@ function Close() {
           <li key={letter}>{letter}</li>
         ))}
       </ol>
-      <p className="close-line">
-        <a href="#buy">Get instant access now</a>
-      </p>
+      <p className="close-line"><a href="#buy">Get instant access now</a></p>
     </footer>
   );
 }
