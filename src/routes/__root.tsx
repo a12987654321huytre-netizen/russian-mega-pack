@@ -16,7 +16,7 @@ export const Route = createRootRoute({
         content:
           "The Russian Mega Pack is a one-time purchase: audio lessons, video, reading, Cyrillic, grammar, vocabulary, conversations, pronunciation, exercises, and cultural context. No subscription.",
       },
-      { name: "theme-color", content: "#d7e0dc" },
+      { name: "theme-color", content: "#120904" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
